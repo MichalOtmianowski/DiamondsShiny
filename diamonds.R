@@ -48,25 +48,30 @@ ui <- dashboardPage(
               )
       ),
       tabItem(tabName = "predict", h2("Examin the relation between diamonds characteristics and price"),
-              fluidPage(flowLayout(
+              fluidPage(
+                flowLayout(
+                  verbatimTextOutput('result'),
+                  actionButton("make_prediction", "Make prediction")
+                ),
+                fluidRow(
                 conditionalPanel(condition="input.checkGroup.indexOf('carat')>=0",
-                                 box(width=12, sliderInput('carat','Choose carat value:', min=min(diamonds$carat), max=max(diamonds$carat), step=0.1, value=2.5))),
+                                 box(width=4, sliderInput('carat','Choose carat value:', min=min(diamonds$carat), max=max(diamonds$carat), step=0.1, value=2.5))),
                 conditionalPanel(condition="input.checkGroup.indexOf('depth')>=0",
-                                 box(width=12, sliderInput('depth','Choose depth value:', min=min(diamonds$depth), max=max(diamonds$depth), step=0.1, value=60))),
+                                 box(width=4, sliderInput('depth','Choose depth value:', min=min(diamonds$depth), max=max(diamonds$depth), step=0.1, value=60))),
                 conditionalPanel(condition="input.checkGroup.indexOf('table')>=0",
-                                 box(width=12, sliderInput('table','Choose table value:', min=min(diamonds$table), max=max(diamonds$table), step=1, value=60))),
+                                 box(width=4, sliderInput('table','Choose table value:', min=min(diamonds$table), max=max(diamonds$table), step=1, value=60))),
                 conditionalPanel(condition="input.checkGroup.indexOf('x')>=0",
-                                 box(width=12, sliderInput('x','Choose x value:', min=min(diamonds$x), max=max(diamonds$x), step=0.01, value=4.0))),
+                                 box(width=4, sliderInput('x','Choose x value:', min=min(diamonds$x), max=max(diamonds$x), step=0.01, value=4.0))),
                 conditionalPanel(condition="input.checkGroup.indexOf('y')>=0",
-                                 box(width=12, sliderInput('depth','Choose y value:', min=min(diamonds$y), max=max(diamonds$y), step=0.01, value=4))),
+                                 box(width=4, sliderInput('depth','Choose y value:', min=min(diamonds$y), max=max(diamonds$y), step=0.01, value=4))),
                 conditionalPanel(condition="input.checkGroup.indexOf('z')>=0",
-                                 box(width=12, sliderInput('depth','Choose z value:', min=min(diamonds$z), max=max(diamonds$z), step=0.01, value=2.5))),
+                                 box(width=4, sliderInput('depth','Choose z value:', min=min(diamonds$z), max=max(diamonds$z), step=0.01, value=2.5))),
                 conditionalPanel(condition="input.checkGroup.indexOf('color')>=0",
-                                 box(width=12, selectInput('depth','Choose color:', choices=unique(diamonds$color), selected=NULL))),
+                                 box(width=4, selectInput('depth','Choose color:', choices=unique(diamonds$color), selected=NULL))),
                 conditionalPanel(condition="input.checkGroup.indexOf('clarity')>=0",
-                                 box(width=12, selectInput('depth','Choose clarity:', choices=unique(diamonds$clarity), selected=NULL))),
+                                 box(width=4, selectInput('depth','Choose clarity:', choices=unique(diamonds$clarity), selected=NULL))),
                 conditionalPanel(condition="input.checkGroup.indexOf('cut')>=0",
-                                 box(width=12, selectInput('depth','Choose cut:', choices=unique(diamonds$cut), selected=NULL)))
+                                 box(width=4, selectInput('depth','Choose cut:', choices=unique(diamonds$cut), selected=NULL)))
               )
               )
       )
@@ -98,6 +103,16 @@ server <- function(input, output) {
 
   observe({
     input$checkGroup
+  })
+  
+  f<-reactiveValues(data=NULL)
+  
+  observeEvent(input$make_prediction, {
+    f$data<-data.frame(input$checkGroup)
+    
+  })
+  output$result<-renderPrint({
+    f$data
   })
 }
 
